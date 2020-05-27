@@ -4,6 +4,14 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+import Gallery from "./Gallery";
+
+let urls = [
+  "/react-image-gallery/img/cat1.jpg",
+  "/react-image-gallery/img/cat2.jpg",
+  "/react-image-gallery/img/cat3.jpg"
+];
+
 ReactDOM.render(
   <React.StrictMode>
     <App />
