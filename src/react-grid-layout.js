@@ -31,7 +31,8 @@ export default class BasicLayout extends React.PureComponent {
     return _.map(_.range(this.props.items), function(i) {
       return (
         <div key={i}>
-          <img src="https://i.imgur.com/BLEYNX6.png" style={{height:'100%', width:"auto"}} />
+          <img src="https://i.imgur.com/BLEYNX6.png" 
+               style={{height:'100%', width:"100%", objectFit:"contain"}} />
           <span className="text">{i+100}</span>
         </div>
       );
