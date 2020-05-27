@@ -4,17 +4,6 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-import Gallery from "./Gallery";
-
-let urls = [
-  "https://i.imgur.com/XBKeqCB.jpg",
-  "https://i.imgur.com/XBKeqCB.jpg",
-  "https://i.imgur.com/XBKeqCB.jpg"
-];
-
-//ReactDOM.render(<Gallery imageUrls={urls} />, document.getElementById("mount"));
-
-
 ReactDOM.render(
   <React.StrictMode>
     <App />
