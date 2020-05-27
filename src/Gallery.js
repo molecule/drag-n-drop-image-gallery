@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from 'prop-types'
 
 class Gallery extends React.Component {
+    
 renderImage(imageUrl) {
     return (
         <div>
