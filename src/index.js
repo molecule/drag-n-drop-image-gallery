@@ -7,14 +7,17 @@ import * as serviceWorker from './serviceWorker';
 import Gallery from "./Gallery";
 
 let urls = [
-  "/react-image-gallery/img/cat1.jpg",
-  "/react-image-gallery/img/cat2.jpg",
-  "/react-image-gallery/img/cat3.jpg"
+  "https://i.imgur.com/XBKeqCB.jpg",
+  "https://i.imgur.com/XBKeqCB.jpg",
+  "https://i.imgur.com/XBKeqCB.jpg"
 ];
+
+//ReactDOM.render(<Gallery imageUrls={urls} />, document.getElementById("mount"));
+
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Gallery imageUrls={urls} />
   </React.StrictMode>,
   document.getElementById('root')
 );
