@@ -3,6 +3,7 @@ import _ from "lodash";
 import RGL, { WidthProvider } from "react-grid-layout";
 
 const ReactGridLayout = WidthProvider(RGL);
+const originalLayout = getFromLS("layout") || [];
 
 export default class BasicLayout extends React.PureComponent {
   static defaultProps = {
@@ -16,8 +17,14 @@ export default class BasicLayout extends React.PureComponent {
   constructor(props) {
     super(props);
 
+    this.state = {
+      layout: JSON.parse(JSON.stringify(originalLayout))
+    };
+
+    this.onLayoutChange = this.onLayoutChange.bind(this);
+    this.resetLayout = this.resetLayout.bind(this);
+
     const layout = this.generateLayout();
-    this.state = { layout };
   }
 
   generateDOM() {
@@ -45,18 +52,53 @@ export default class BasicLayout extends React.PureComponent {
   }
 
   onLayoutChange(layout) {
-    this.props.onLayoutChange(layout);
+    /*eslint no-console: 0*/
+    saveToLS("layout", layout);
+    this.setState({ layout });
+    this.props.onLayoutChange(layout); // updates status display
+  }
+
+  resetLayout() {
+    this.setState({
+      layout: []
+    });
   }
 
   render() {
     return (
-      <ReactGridLayout
-        layout={this.state.layout}
-        onLayoutChange={this.onLayoutChange}
-        {...this.props}
-      >
-        {this.generateDOM()}
-      </ReactGridLayout>
+      <div>
+        <button onClick={this.resetLayout}>Reset Layout</button>
+        <ReactGridLayout
+          {...this.props}
+          layout={this.state.layout}
+          onLayoutChange={this.onLayoutChange}
+        >
+          {this.generateDOM()}
+        </ReactGridLayout>
+        </div>
+    );
+  }
+}
+
+function getFromLS(key) {
+  let ls = {};
+  if (global.localStorage) {
+    try {
+      ls = JSON.parse(global.localStorage.getItem("rgl-7")) || {};
+    } catch (e) {
+      /*Ignore*/
+    }
+  }
+  return ls[key];
+}
+
+function saveToLS(key, value) {
+  if (global.localStorage) {
+    global.localStorage.setItem(
+      "rgl-7",
+      JSON.stringify({
+        [key]: value
+      })
     );
   }
 }
