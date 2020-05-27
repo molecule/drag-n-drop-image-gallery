@@ -17,7 +17,7 @@ let urls = [
 
 ReactDOM.render(
   <React.StrictMode>
-    <Gallery imageUrls={urls} />
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );
