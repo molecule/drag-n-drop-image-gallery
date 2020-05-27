@@ -31,7 +31,7 @@ export default class BasicLayout extends React.PureComponent {
     return _.map(_.range(this.props.items), function(i) {
       return (
         <div key={i}>
-          <span className="text">{i}</span>
+          <span className="text">{i+100}</span>
         </div>
       );
     });
