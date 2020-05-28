@@ -18,13 +18,56 @@ export default class BasicLayout extends React.PureComponent {
     super(props);
 
     this.state = {
-      layout: JSON.parse(JSON.stringify(originalLayout))
+      layout: JSON.parse(JSON.stringify(originalLayout)),
+      items: [0, 1, 2, 3, 4].map(function(i, key, list) {
+        return {
+          i: i.toString(),
+          x: i * 2,
+          y: 0,
+          w: 2,
+          h: 2,
+          add: i === (list.length - 1)
+        };
+      }),
+      newCounter: 0
     };
 
     this.onLayoutChange = this.onLayoutChange.bind(this);
     this.resetLayout = this.resetLayout.bind(this);
+    this.onAddItem = this.onAddItem.bind(this);
+    this.onBreakpointChange = this.onBreakpointChange.bind(this);
 
     const layout = this.generateLayout();
+  }
+
+  onAddItem() {
+    /*eslint no-console: 0*/
+    console.log("adding", "n" + this.state.newCounter);
+    this.setState({
+      // Add a new item. It must have a unique key!
+      items: this.state.items.concat({
+        i: "n" + this.state.newCounter,
+        x: (this.state.items.length * 2) % (this.state.cols || 12),
+        y: Infinity, // puts it at the bottom
+        w: 2,
+        h: 2
+      }),
+      // Increment the counter to ensure key is always unique.
+      newCounter: this.state.newCounter + 1
+    });
+  }
+
+  onRemoveItem(i) {
+    console.log("removing", i);
+    this.setState({ items: _.reject(this.state.items, { i: i }) });
+  }
+
+  // We're using the cols coming back from this to calculate where to add new items.
+  onBreakpointChange(breakpoint, cols) {
+    this.setState({
+      breakpoint: breakpoint,
+      cols: cols
+    });
   }
 
   generateDOM() {
@@ -56,7 +99,7 @@ export default class BasicLayout extends React.PureComponent {
   onLayoutChange(layout) {
     /*eslint no-console: 0*/
     saveToLS("layout", layout);
-    this.setState({ layout });
+    this.setState({ layout: layout });
     this.props.onLayoutChange(layout); // updates status display
   }
 
@@ -70,10 +113,12 @@ export default class BasicLayout extends React.PureComponent {
     return (
       <div>
         <button onClick={this.resetLayout}>Reset Layout</button>
+        <button onClick={this.onAddItem}>Add Item</button>
         <ReactGridLayout
           {...this.props}
           layout={this.state.layout}
           onLayoutChange={this.onLayoutChange}
+          onBreakpointChange={this.onBreakpointChange}
         >
           {this.generateDOM()}
         </ReactGridLayout>
