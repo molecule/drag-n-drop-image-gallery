@@ -70,6 +70,31 @@ export default class BasicLayout extends React.PureComponent {
     });
   }
 
+  createElement(el) {
+    const removeStyle = {
+      position: "absolute",
+      right: "2px",
+      top: 0,
+      cursor: "pointer"
+    };
+    const i = el.add ? "+" : el.i;
+    return (
+      <div key={i} data-grid={el}>
+        <span className="text">{i}</span>
+        <span
+          className="remove"
+          style={removeStyle}
+          onClick={this.onRemoveItem.bind(this, i)}
+        >
+          x
+        </span>
+        <img src="https://i.imgur.com/BLEYNX6.png" 
+               style={{height:'100%', width:"100%", objectFit:"contain"}} />
+          <span className="text">{i}</span>
+      </div>
+    );
+  }
+
   generateDOM() {
     return _.map(_.range(this.props.items), function(i) {
       return (
@@ -120,7 +145,7 @@ export default class BasicLayout extends React.PureComponent {
           onLayoutChange={this.onLayoutChange}
           onBreakpointChange={this.onBreakpointChange}
         >
-          {this.generateDOM()}
+          {_.map(this.state.items, el => this.createElement(el))}
         </ReactGridLayout>
         </div>
     );
