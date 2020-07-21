@@ -1,44 +1,49 @@
 import React from "react";
 import _ from "lodash";
-import RGL, { WidthProvider, Responsive } from "react-grid-layout";
+import { WidthProvider, Responsive } from "react-grid-layout";
 
-const ReactGridLayout = WidthProvider(Responsive);
-const originalLayouts = getFromLocalStorage("layouts") || [];
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
+const originalLayouts = getFromLocalStorage("layouts") || {};
 
-export default class BasicLayout extends React.PureComponent {
+type Props = {|
+  className: string,
+  cols: {[string]: number},
+  onLayoutChange: Function,
+  rowHeight: number,
+|};
+type State = {|
+  currentBreakpoint: string,
+  compactType: CompactType,
+  mounted: boolean,
+  layouts: {[string]: Layout}
+|};
+
+export default class ResponsiveLocalStorageLayout extends React.PureComponent {
+
   static defaultProps = {
     className: "layout",
-    items: 5,
-    rowHeight: 150,
+    rowHeight: 30,
     onLayoutChange: function() {},
     cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    currentBreakpoint: "lg",
+    mounted: false,
+    layouts: { lg: generateLayout() },
+    items: 5,
+    newCounter: 0
+  };
 
-    this.state = {
-      layouts: JSON.parse(JSON.stringify(originalLayouts)),
-      items: [0, 1, 2, 3, 4].map(function(i, key, list) {
-        return {
-          i: i.toString(),
-          x: i * 2,
-          y: 0,
-          w: 2,
-          h: 2,
-          add: i === (list.length - 1)
-        };
-      }),
-      newCounter: 0
-    };
+  componentDidMount() {
+    this.setState({ mounted: true });
+  };
 
-    this.onLayoutChange = this.onLayoutChange.bind(this);
-    this.resetLayout = this.resetLayout.bind(this);
-    this.onAddItem = this.onAddItem.bind(this);
-    this.onBreakpointChange = this.onBreakpointChange.bind(this);
-
-    const layout = this.generateLayout();
-  }
+  onBreakpointChange = (breakpoint: string) => {
+    this.setState({
+      currentBreakpoint: breakpoint
+    });
+  };
 
   onAddItem() {
     /*eslint no-console: 0*/
@@ -60,14 +65,6 @@ export default class BasicLayout extends React.PureComponent {
   onRemoveItem(i) {
     console.log("removing", i);
     this.setState({ items: _.reject(this.state.items, { i: i }) });
-  }
-
-  // We're using the cols coming back from this to calculate where to add new items.
-  onBreakpointChange(breakpoint, cols) {
-    this.setState({
-      breakpoint: breakpoint,
-      cols: cols
-    });
   }
 
   createElement(el) {
@@ -93,47 +90,50 @@ export default class BasicLayout extends React.PureComponent {
       </div>
     );
   }
+ 
 
-  generateLayout() {
-    const p = this.props;
-    return _.map(new Array(p.items), function(item, i) {
-      const y = _.result(p, "y") || Math.ceil(Math.random() * 4) + 1;
-      return {
-        x: (i * 2) % 12,
-        y: Math.floor(i / 6) * y,
-        w: 2,
-        h: y,
-        i: i.toString()
-      };
+  onLayoutChange = (layout: Layout, layouts: {[string]: Layout}) => {
+    this.props.onLayoutChange(layout, layouts);
+  };
+
+  onNewLayout = () => {
+    this.setState({
+      layouts: { lg: generateLayout() }
     });
-  }
-
-  onLayoutChange(layout, layouts) {
-    /*eslint no-console: 0*/
-    saveToLocalStorage("layouts", layouts);
-    this.setState({ layouts: layout });
-    //this.props.onLayoutChange(layout); // updates status display
-  }
+  };
 
   resetLayout() {
-    this.setState({
-      layouts: []
+    this.setState({ layouts: {} });
+  }
+
+  generateDOM() {
+    return _.map(this.state.layouts.lg, function(l, i) {
+      return (
+        <div key={i} className="">
+          {(<span className="text">{i}</span>)}
+        </div>
+      );
     });
   }
 
   render() {
     return (
       <div>
+        <div>
+          Current Breakpoint: {this.state.currentBreakpoint} (
+          {this.props.cols[this.state.currentBreakpoint]} columns)
+        </div>
+        <button onClick={this.onNewLayout}>Generate New Layout</button>
         <button onClick={this.resetLayout}>Reset Layout</button>
         <button onClick={this.onAddItem}>Add Item</button>
-        <ReactGridLayout
+        <ResponsiveReactGridLayout
           {...this.props}
-          layout={this.state.layout}
-          onLayoutChange={this.onLayoutChange}
+          layouts={this.state.layouts}
           onBreakpointChange={this.onBreakpointChange}
+          onLayoutChange={this.onLayoutChange}
         >
-          {_.map(this.state.items, el => this.createElement(el))}
-        </ReactGridLayout>
+          {this.generateDOM()}
+        </ResponsiveReactGridLayout>
         </div>
     );
   }
@@ -160,4 +160,17 @@ function saveToLocalStorage(key, value) {
       })
     );
   }
+}
+
+function generateLayout() {
+  return _.map(_.range(0, 25), function(item, i) {
+    var y = Math.ceil(Math.random() * 4) + 1;
+    return {
+      x: Math.round(Math.random() * 5) * 2,
+      y: Math.floor(i / 6) * y,
+      w: 2,
+      h: y,
+      i: i.toString(),
+    };
+  });
 }
