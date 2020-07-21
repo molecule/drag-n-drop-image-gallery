@@ -5,19 +5,6 @@ import { WidthProvider, Responsive } from "react-grid-layout";
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLocalStorage("layouts") || {};
 
-type Props = {|
-  className: string,
-  cols: {[string]: number},
-  onLayoutChange: Function,
-  rowHeight: number,
-|};
-type State = {|
-  currentBreakpoint: string,
-  compactType: CompactType,
-  mounted: boolean,
-  layouts: {[string]: Layout}
-|};
-
 export default class ResponsiveLocalStorageLayout extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -26,7 +13,6 @@ export default class ResponsiveLocalStorageLayout extends React.PureComponent {
       layouts: JSON.parse(JSON.stringify(originalLayouts))
     };
   }
-
 
   static defaultProps = {
     className: "layout",
@@ -112,10 +98,6 @@ export default class ResponsiveLocalStorageLayout extends React.PureComponent {
     });
   };
 
-  resetLayout() {
-    this.setState({ layouts: {} });
-  }
-
   generateDOM() {
     return _.map(this.state.layouts.lg, function(l, i) {
       return (
@@ -134,7 +116,6 @@ export default class ResponsiveLocalStorageLayout extends React.PureComponent {
           {this.props.cols[this.state.currentBreakpoint]} columns)
         </div>
         <button onClick={this.onNewLayout}>Generate New Layout</button>
-        <button onClick={this.resetLayout}>Reset Layout</button>
         <button onClick={this.onAddItem}>Add Item</button>
         <ResponsiveReactGridLayout
           {...this.props}
@@ -175,7 +156,7 @@ function saveToLocalStorage(key, value) {
 }
 
 function generateLayout() {
-  return _.map(_.range(0, 25), function(item, i) {
+  return _.map(_.range(0, 5), function(item, i) {
     var y = Math.ceil(Math.random() * 4) + 1;
     return {
       x: Math.round(Math.random() * 5) * 2,
