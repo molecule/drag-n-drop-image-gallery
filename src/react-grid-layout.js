@@ -127,7 +127,7 @@ export default class BasicLayout extends React.PureComponent {
   }
 }
 
-function getFromLS(key) {
+function getFromLocalStorage(key) {
   let ls = {};
   if (global.localStorage) {
     try {
@@ -139,7 +139,7 @@ function getFromLS(key) {
   return ls[key];
 }
 
-function saveToLS(key, value) {
+function saveToLocalStorage(key, value) {
   if (global.localStorage) {
     global.localStorage.setItem(
       "rgl-7",
