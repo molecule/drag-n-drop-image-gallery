@@ -19,6 +19,14 @@ type State = {|
 |};
 
 export default class ResponsiveLocalStorageLayout extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      layouts: JSON.parse(JSON.stringify(originalLayouts))
+    };
+  }
+
 
   static defaultProps = {
     className: "layout",
@@ -30,7 +38,7 @@ export default class ResponsiveLocalStorageLayout extends React.PureComponent {
   state = {
     currentBreakpoint: "lg",
     mounted: false,
-    layouts: { lg: generateLayout() },
+    layouts: { layout: JSON.parse(JSON.stringify(originalLayouts)) },
     items: 5,
     newCounter: 0
   };
@@ -90,10 +98,12 @@ export default class ResponsiveLocalStorageLayout extends React.PureComponent {
       </div>
     );
   }
- 
-
+  
   onLayoutChange = (layout: Layout, layouts: {[string]: Layout}) => {
+    console.log("On Layout Change")
+    saveToLocalStorage("layouts", layouts);
     this.props.onLayoutChange(layout, layouts);
+    this.setState({ layouts: layouts });
   };
 
   onNewLayout = () => {
@@ -130,7 +140,9 @@ export default class ResponsiveLocalStorageLayout extends React.PureComponent {
           {...this.props}
           layouts={this.state.layouts}
           onBreakpointChange={this.onBreakpointChange}
-          onLayoutChange={this.onLayoutChange}
+          onLayoutChange={(layout, layouts) =>
+            this.onLayoutChange(layout, layouts)
+          }
         >
           {this.generateDOM()}
         </ResponsiveReactGridLayout>
