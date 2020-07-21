@@ -2,8 +2,8 @@ import React from "react";
 import _ from "lodash";
 import RGL, { WidthProvider, Responsive } from "react-grid-layout";
 
-const ReactGridLayout = WidthProvider(RGL);
-const originalLayout = getFromLocalStorage("layout") || [];
+const ReactGridLayout = WidthProvider(Responsive);
+const originalLayouts = getFromLocalStorage("layouts") || [];
 
 export default class BasicLayout extends React.PureComponent {
   static defaultProps = {
@@ -11,14 +11,14 @@ export default class BasicLayout extends React.PureComponent {
     items: 5,
     rowHeight: 150,
     onLayoutChange: function() {},
-    cols: 12
+    cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      layout: JSON.parse(JSON.stringify(originalLayout)),
+      layouts: JSON.parse(JSON.stringify(originalLayouts)),
       items: [0, 1, 2, 3, 4].map(function(i, key, list) {
         return {
           i: i.toString(),
@@ -77,7 +77,7 @@ export default class BasicLayout extends React.PureComponent {
       top: 0,
       cursor: "pointer"
     };
-    const i = el.add ? "+" : el.i;
+    const i = el.i;
     return (
       <div key={i} data-grid={el}>
         <span className="text">{i}</span>
@@ -90,7 +90,6 @@ export default class BasicLayout extends React.PureComponent {
         </span>
         <img src="https://i.imgur.com/BLEYNX6.png" 
                style={{height:'100%', width:"100%", objectFit:"contain"}} />
-          <span className="text">{i}</span>
       </div>
     );
   }
@@ -109,16 +108,16 @@ export default class BasicLayout extends React.PureComponent {
     });
   }
 
-  onLayoutChange(layout) {
+  onLayoutChange(layout, layouts) {
     /*eslint no-console: 0*/
-    saveToLocalStorage("layout", layout);
-    this.setState({ layout: layout });
-    this.props.onLayoutChange(layout); // updates status display
+    saveToLocalStorage("layouts", layouts);
+    this.setState({ layouts: layout });
+    //this.props.onLayoutChange(layout); // updates status display
   }
 
   resetLayout() {
     this.setState({
-      layout: []
+      layouts: []
     });
   }
 
@@ -144,7 +143,7 @@ function getFromLocalStorage(key) {
   let ls = {};
   if (global.localStorage) {
     try {
-      ls = JSON.parse(global.localStorage.getItem("rgl-7")) || {};
+      ls = JSON.parse(global.localStorage.getItem("rgl-8")) || {};
     } catch (e) {
       /*Ignore*/
     }
@@ -155,7 +154,7 @@ function getFromLocalStorage(key) {
 function saveToLocalStorage(key, value) {
   if (global.localStorage) {
     global.localStorage.setItem(
-      "rgl-7",
+      "rgl-8",
       JSON.stringify({
         [key]: value
       })
