@@ -3,13 +3,13 @@ import _ from "lodash";
 import RGL, { WidthProvider } from "react-grid-layout";
 
 const ReactGridLayout = WidthProvider(RGL);
-const originalLayout = getFromLS("layout") || [];
+const originalLayout = getFromLocalStorage("layout") || [];
 
 export default class BasicLayout extends React.PureComponent {
   static defaultProps = {
     className: "layout",
-    items: 20,
-    rowHeight: 30,
+    items: 5,
+    rowHeight: 150,
     onLayoutChange: function() {},
     cols: 12
   };
@@ -98,7 +98,7 @@ export default class BasicLayout extends React.PureComponent {
 
   onLayoutChange(layout) {
     /*eslint no-console: 0*/
-    saveToLS("layout", layout);
+    saveToLocalStorage("layout", layout);
     this.setState({ layout: layout });
     this.props.onLayoutChange(layout); // updates status display
   }
