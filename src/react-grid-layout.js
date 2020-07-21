@@ -1,6 +1,6 @@
 import React from "react";
 import _ from "lodash";
-import RGL, { WidthProvider } from "react-grid-layout";
+import RGL, { WidthProvider, Responsive } from "react-grid-layout";
 
 const ReactGridLayout = WidthProvider(RGL);
 const originalLayout = getFromLocalStorage("layout") || [];
@@ -93,18 +93,6 @@ export default class BasicLayout extends React.PureComponent {
           <span className="text">{i}</span>
       </div>
     );
-  }
-
-  generateDOM() {
-    return _.map(_.range(this.props.items), function(i) {
-      return (
-        <div key={i}>
-          <img src="https://i.imgur.com/BLEYNX6.png" 
-               style={{height:'100%', width:"100%", objectFit:"contain"}} />
-          <span className="text">{i}</span>
-        </div>
-      );
-    });
   }
 
   generateLayout() {
