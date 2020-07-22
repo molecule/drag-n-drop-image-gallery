@@ -12,6 +12,9 @@ export default class ResponsiveLocalStorageLayout extends React.PureComponent {
     this.state = {
       layouts: JSON.parse(JSON.stringify(originalLayouts))
     };
+
+    this.onAddItem = this.onAddItem.bind(this);
+
   }
 
   static defaultProps = {
